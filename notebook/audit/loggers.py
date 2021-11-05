@@ -23,4 +23,4 @@ class FileLogger:
         """
         Format the message for logging.
         """
-        return msg
+        return str(msg)
