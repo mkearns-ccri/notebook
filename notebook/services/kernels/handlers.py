@@ -24,6 +24,7 @@ except ImportError:
 from ipython_genutils.py3compat import cast_unicode
 from notebook.utils import maybe_future, url_path_join, url_escape
 
+from ...audit.loggers import FileLogger
 from ...base.handlers import APIHandler
 from ...base.zmqhandlers import AuthenticatedZMQStreamHandler, deserialize_binary_message
 
@@ -311,6 +312,7 @@ class ZMQChannelsHandler(AuthenticatedZMQStreamHandler):
 
     def initialize(self):
         super().initialize()
+        self.auditor = FileLogger()
         self.zmq_stream = None
         self.channels = {}
         self.kernel_id = None
@@ -442,6 +444,7 @@ class ZMQChannelsHandler(AuthenticatedZMQStreamHandler):
         else:
             stream = self.channels[channel]
             self.session.send(stream, msg)
+            self.auditor.log(mt, msg)
 
     def _on_zmq_reply(self, stream, msg_list):
         idents, fed_msg_list = self.session.feed_identities(msg_list)
