@@ -442,7 +442,7 @@ class ZMQChannelsHandler(AuthenticatedZMQStreamHandler):
         if am and mt not in am:
             self.log.warning('Received message of type "%s", which is not allowed. Ignoring.' % mt)
         else:
-            self.auditor.log(mt, msg)
+            self.auditor.log(self._format_message(mt, msg))
             stream = self.channels[channel]
             self.session.send(stream, msg)
 
@@ -612,6 +612,17 @@ class ZMQChannelsHandler(AuthenticatedZMQStreamHandler):
     def on_restart_failed(self):
         logging.error("kernel %s restarted failed!", self.kernel_id)
         self._send_status_message('dead')
+
+    def _format_message(self, msg_type, msg):
+        return {
+            'username': self.get_current_user()['name'],
+            'session': msg['header']['session'],
+            'cell_id': msg['metadata']['cellId'],
+            'message_id': msg['header']['msg_id'],
+            'message_type': msg_type,
+            'datetime': msg['header']['date'],
+            'code': msg['content']['code'],
+        }
 
 
 #-----------------------------------------------------------------------------
