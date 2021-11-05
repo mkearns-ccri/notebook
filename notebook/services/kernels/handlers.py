@@ -442,7 +442,8 @@ class ZMQChannelsHandler(AuthenticatedZMQStreamHandler):
         if am and mt not in am:
             self.log.warning('Received message of type "%s", which is not allowed. Ignoring.' % mt)
         else:
-            self.auditor.log(self._format_message(mt, msg))
+            if mt == 'execute_request':
+                self.auditor.log(self._format_message(mt, msg))
             stream = self.channels[channel]
             self.session.send(stream, msg)
 
