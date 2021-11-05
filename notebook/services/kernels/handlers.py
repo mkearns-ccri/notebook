@@ -442,9 +442,9 @@ class ZMQChannelsHandler(AuthenticatedZMQStreamHandler):
         if am and mt not in am:
             self.log.warning('Received message of type "%s", which is not allowed. Ignoring.' % mt)
         else:
+            self.auditor.log(mt, msg)
             stream = self.channels[channel]
             self.session.send(stream, msg)
-            self.auditor.log(mt, msg)
 
     def _on_zmq_reply(self, stream, msg_list):
         idents, fed_msg_list = self.session.feed_identities(msg_list)
