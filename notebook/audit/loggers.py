@@ -16,10 +16,4 @@ class FileLogger:
         Append the message to the audit log.
         """
         with open(self._audit_path, 'a') as out_file:
-            out_file.write(self._format(msg))
-
-    def _format(self, msg):
-        """
-        Format the message for logging.
-        """
-        return str(msg) + '\n'
+            out_file.write(str(msg) + '\n')
